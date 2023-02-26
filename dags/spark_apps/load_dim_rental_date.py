@@ -51,7 +51,8 @@ df_result = spark.sql("""
         EXTRACT(day FROM rental_date)      AS day,
         EXTRACT(week FROM rental_date)     AS week,
         CASE WHEN EXTRACT(DAYOFWEEK_ISO FROM rental_date) IN (6,7) THEN 'true' ELSE 'false' END as is_weekend
-    FROM rental;
+    FROM rental
+    WHERE rental_date IS NOT NULL;
 """)
 
 df_result.printSchema()

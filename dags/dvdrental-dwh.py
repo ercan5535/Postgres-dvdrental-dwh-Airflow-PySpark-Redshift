@@ -1,13 +1,11 @@
-from datetime import timedelta
-
 import airflow
+
+from datetime import timedelta
 from airflow import DAG
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators.python import PythonOperator
-from airflow.contrib.operators.spark_submit_operator import SparkSubmitOperator
-
+from operators.data_quality import RedshiftCheckTables
 from airflow.models import Variable
 
 # Get credentials from airfow variables
@@ -38,7 +36,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id='dag_postgres_v04',
+    dag_id='dvdrental-dwh',
     default_args=default_args,
     start_date=airflow.utils.dates.days_ago(1),
     schedule_interval='@daily'
@@ -135,6 +133,16 @@ with DAG(
         task_id="load_fact_sales",
         bash_command=spark_run_command('load_fact_sales.py')
     )
+
+    # Define DAG to check Redshift tables
+    check_tables = RedshiftCheckTables(
+        task_id="check_tables",
+        redshift_conn_id="redshift",
+        tables=[
+            "dim_payment_date", "dim_rental_date", "dim_return_date",
+            "dim_customer", "dim_movie", "dim_staff", "dim_store", "fact_sales"
+        ]
+    )
  
     # Define data pipeline DAG structure
     # Create dim tables first
@@ -159,6 +167,9 @@ with DAG(
     load_dim_movie >> load_dim_staff
     load_dim_staff >> load_dim_store
     load_dim_store >> load_fact_sales
+
+    # Ensure tables are exist and has some data
+    load_fact_sales >> check_tables
 
 
 

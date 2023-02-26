@@ -13,4 +13,3 @@ ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 
 COPY . .
 RUN pip install -r requirements.txt
-RUN pip install --no-cache-dir apache-airflow-providers-apache-spark==2.1.3

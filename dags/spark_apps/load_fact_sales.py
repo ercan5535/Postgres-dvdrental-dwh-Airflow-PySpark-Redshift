@@ -61,8 +61,8 @@ df_inventory.createOrReplaceTempView("inventory")
 df_result = spark.sql("""
     SELECT
         p.payment_id    AS sales_key,
-        date_format(p.payment_date, 'yyMMdd') AS payment_date_key,
-        date_format(r.rental_date, 'yyMMdd')  AS rental_date_key,
+        INT(date_format(p.payment_date, 'yyMMdd')) AS payment_date_key,
+        INT(date_format(r.rental_date, 'yyMMdd'))  AS rental_date_key,
         INT(date_format(r.return_date, 'yyMMdd')) AS return_date_key,
         p.customer_id  	AS customer_key,
         p.staff_id 		AS staff_key,

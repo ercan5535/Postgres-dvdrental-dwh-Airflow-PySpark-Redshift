@@ -51,7 +51,8 @@ df_result = spark.sql("""
         EXTRACT(day FROM payment_date)      AS day,
         EXTRACT(week FROM payment_date)     AS week,
         CASE WHEN EXTRACT(DAYOFWEEK_ISO FROM payment_date) IN (6,7) THEN 'true' ELSE 'false' END as is_weekend
-    FROM payment;
+    FROM payment
+    WHERE payment_date IS NOT NULL;
 """)
 
 df_result.printSchema()
@@ -66,7 +67,7 @@ df_result.write\
 # Write into AWS Redshift
 df_result.write.format("jdbc").options(
     url=redshift_url,
-    dbtable="dim_date",
+    dbtable="dim_payment_date",
     user=redshift_user,
     password=redshift_password,
     driver="com.amazon.redshift.jdbc42.Driver"
