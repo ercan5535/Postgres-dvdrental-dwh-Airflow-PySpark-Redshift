@@ -58,7 +58,7 @@ ETL pipeline
 │       ├── create_dim_store.sql
 │       └── create_fact_sales.sql
 ```
-- Checkables dag created by custome operator 'RedshiftCheckTables' in plugin folder
+- Checkables dag created by custom operator 'RedshiftCheckTables' is under plugin folder
 ```bash
 ├── plugins
 │   ├── __init__.py
@@ -66,3 +66,8 @@ ETL pipeline
 │   │   ├── data_quality.py
 │   │   ├── __init__.py
 ```
+# Usage
+- Initialization and Starting enviroment with docker-compose file is very easy and explained <a href="https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#initializing-environment">here</a>
+- After containers are ready, credentials and Airflow-RedShift connection must be defined
+- To define credentials, credentials.json can be filled and exported to Airflow variables with Airflow UI (http://localhost:8080/variable/list/)
+- To define Airflow-RedShift connection, a redshift connection must be created with Airflow UI, connection name is 'redshift' in dag file so it must be 'redshift' when its created
